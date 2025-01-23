@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'register_screen.dart';
+import 'habit_tracker_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,9 +23,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final String defaultPassword = 'password123';
 
   void _login() async {
+    final username = _usernameController.text;
+
     await checkUserData();
     if ( _isLoginValid() ) {
-      showSuccessToast("Valid credentials");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HabitTrackerScreen(username: username),
+        ),
+      );
     }
     else {
       showErrorToast("Invalid credentials");
@@ -32,8 +40,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   
-  Fluttertoast.showToast
-backgroundColor
+  
+  void showErrorToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Color(0xFFFFCDD2), // Light red color
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
+  }
 
   void showSuccessToast(String message) {
   Fluttertoast.showToast(

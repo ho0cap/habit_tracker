@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'habit_tracker_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_screen.dart';
@@ -61,16 +62,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  void _register(context) async {
-    if (!(validateForm())) {
-        showErrorToast("Name, Username and Password cannot be empty");
+  void _register(/*context*/) async {
+    final name = _nameController.text;
+    final username = _usernameController.text;
+
+    if (username.isEmpty || name.isEmpty) {
+      _showToast('Please fill in all fields');
+      return;
     }
 
-    await saveUserData();
+    //await saveUserData();
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(
+        builder: (context) => HabitTrackerScreen(username: username),
+      ),
     );
   }
 
@@ -81,6 +88,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Color(0xFFFFCDD2), // Light red color
       textColor: Colors.black,
+      fontSize: 16.0,
+    );
+  }
+
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
       fontSize: 16.0,
     );
   }
@@ -198,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _register(context),
+                    onPressed: _register/*(context)*/,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade600,
                       shape: RoundedRectangleBorder(
