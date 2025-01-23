@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_screen.dart';
 
@@ -12,6 +14,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   double _age = 25; // Default age set to 25
   String _country = 'Morocco';
   List<String> _countries = [];
@@ -58,9 +61,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  void _register() async {
-    // dummy for now
-    print("registration logic here");
+  void _register(context) async {
+    if (!(validateForm())) {
+        showErrorToast("Name, Username and Password cannot be empty");
+    }
+
+    await saveUserData();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
+  void showErrorToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Color(0xFFFFCDD2), // Light red color
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
+  }
+
+  Future<void> saveUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString("name", _nameController.text);
+    await prefs.setString("username", _usernameController.text);
+    await prefs.setString("password", _passwordController.text);
+  }
+
+
+  bool validateForm() {
+    if (_nameController.text.isEmpty || _usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+        return false;
+    }
+    return true;
   }
 
   @override
@@ -101,10 +139,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInputField(_nameController, 'Name', Icons.person),
+                _buildInputField(_nameController, 'Name', Icons.person, false),
                 const SizedBox(height: 10),
                 _buildInputField(
-                    _usernameController, 'Username', Icons.alternate_email),
+                    _usernameController, 'Username', Icons.alternate_email, false),
+                const SizedBox(height: 10),
+                _buildInputField(
+                    _passwordController, 'Password', Icons.password, true),
                 const SizedBox(height: 10),
                 Text('Age: ${_age.round()}',
                     style: const TextStyle(color: Colors.white, fontSize: 18)),
@@ -157,7 +198,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _register,
+                    onPressed: _register(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade600,
                       shape: RoundedRectangleBorder(
@@ -185,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildInputField(
-      TextEditingController controller, String hint, IconData icon) {
+      TextEditingController controller, String hint, IconData icon, bool isPassword) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -193,6 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       child: TextField(
         controller: controller,
+        obscureText: isPassword,
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: Colors.blue.shade700),
           hintText: hint,

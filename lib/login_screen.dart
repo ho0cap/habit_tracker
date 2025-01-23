@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'register_screen.dart';
 
@@ -12,14 +14,50 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  String _savedUsernameValue = '';
+  String _savedPasswordValue = '';
 
   // Default credentials
   final String defaultUsername = 'testuser';
   final String defaultPassword = 'password123';
 
-  void _login() {
-    // The login logic goes here
-    print("login logic here");
+  void _login() async {
+    await checkUserData();
+    if ( _isLoginValid() ) {
+      showSuccessToast("Valid credentials");
+    }
+    else {
+      showErrorToast("Invalid credentials");
+    }
+  }
+
+  
+  Fluttertoast.showToast
+backgroundColor
+
+  void showSuccessToast(String message) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: Color(0xFF81C784), // Light green color
+    textColor: Colors.black,
+    fontSize: 16.0,
+  );
+}
+
+  Future<void> checkUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    
+    setState(() {
+      _savedUsernameValue = prefs.getString('username') ?? '';
+      _savedPasswordValue = prefs.getString('password') ?? '';
+    });
+  }
+
+  bool _isLoginValid() {
+
+    return (_usernameController.text == _savedUsernameValue && _passwordController.text == _savedPasswordValue );
   }
 
   @override
