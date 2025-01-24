@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   String _savedUsernameValue = '';
   String _savedPasswordValue = '';
+  String _savedEmailValue = '';
 
   // Default credentials
   final String defaultUsername = 'testuser';
@@ -69,12 +70,25 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _savedUsernameValue = prefs.getString('username') ?? '';
       _savedPasswordValue = prefs.getString('password') ?? '';
+      _savedEmailValue    = prefs.getString('email') ?? '';
+
+/*      print("\n\n\n\n\n#################################################");
+      print(prefs.getString('username'));
+      print(prefs.getString('password'));
+      print(prefs.getString('name'));
+      print("#################################################\n\n\n\n\n");*/
     });
   }
 
   bool _isLoginValid() {
-
-    return (_usernameController.text == _savedUsernameValue && _passwordController.text == _savedPasswordValue );
+    return 
+    (
+      (_usernameController.text == _savedUsernameValue 
+          && _passwordController.text == _savedPasswordValue )
+      ||
+      (_usernameController.text == _savedEmailValue 
+          && _passwordController.text == _savedPasswordValue )
+    );
   }
 
   @override
@@ -113,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       prefixIcon:
                           Icon(Icons.email, color: Colors.blue.shade700),
-                      hintText: 'Enter Username',
+                      hintText: 'Enter Username or Email',
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 15),

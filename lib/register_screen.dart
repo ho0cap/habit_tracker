@@ -15,6 +15,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   double _age = 25; // Default age set to 25
   String _country = 'Morocco';
@@ -65,13 +66,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _register(/*context*/) async {
     final name = _nameController.text;
     final username = _usernameController.text;
+    final email = _emailController.text;
 
     if (username.isEmpty || name.isEmpty) {
       _showToast('Please fill in all fields');
       return;
     }
 
-    //await saveUserData();
+    await saveUserData();
 
     Navigator.pushReplacement(
       context,
@@ -109,14 +111,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await prefs.setString("name", _nameController.text);
     await prefs.setString("username", _usernameController.text);
     await prefs.setString("password", _passwordController.text);
+    await prefs.setString("email", _emailController.text);
+    await prefs.setStringList("selectedHabits", selectedHabits);
+
+/*
+    print("\n\n\n\n\n#################################################");
+    print(prefs.getString('username'));
+    print(prefs.getString('password'));
+    print(prefs.getString('name'));
+    print("#################################################\n\n\n\n\n");*/
   }
 
 
   bool validateForm() {
-    if (_nameController.text.isEmpty || _usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_nameController.text.isEmpty || _usernameController.text.isEmpty || _passwordController.text.isEmpty || _emailController.text.isEmpty) {
         return false;
     }
     return true;
+  }
+
+  void _updateSelectedHabits(habit) async {
+    
+    
+    setState(() {
+      if(selectedHabits.contains(habit)) {
+        selectedHabits.remove(habit);
+      } else {
+        selectedHabits.add(habit);
+      }
+    });
+
   }
 
   @override
@@ -163,6 +187,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _usernameController, 'Username', Icons.alternate_email, false),
                 const SizedBox(height: 10),
                 _buildInputField(
+                    _emailController, 'Email', Icons.email, false),
+                const SizedBox(height: 10),
+                _buildInputField(
                     _passwordController, 'Password', Icons.password, true),
                 const SizedBox(height: 10),
                 Text('Age: ${_age.round()}',
@@ -191,7 +218,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: availableHabits.map((habit) {
                     final isSelected = selectedHabits.contains(habit);
                     return GestureDetector(
-                      onTap: () => null,
+                      onTap: () => _updateSelectedHabits(habit),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'add_habit_screen.dart';
 
 class HabitTrackerScreen extends StatefulWidget {
   final String username;
@@ -17,6 +19,20 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
   @override
   void initState() {
     super.initState();
+
+    () async {
+      var result = await _getSavedHabits();
+      setState(() {
+        name = result;
+      });
+    }();
+  }
+
+  Future<String> _getSavedHabits() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString('name') ?? '';
+    //selectedHabitsMap = prefs.getStringList("selectedHabits") ?? {};
   }
 
   Future<void> _saveHabits() async {
@@ -46,6 +62,8 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+    
       appBar: AppBar(
         backgroundColor: Colors.blue.shade700,
         title: Text(
@@ -180,7 +198,14 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       ),
       floatingActionButton: selectedHabitsMap.isEmpty
           ? FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+               Navigator.push(
+                 context,
+                 MaterialPageRoute(
+                  builder: (context) => AddHabitScreen(),
+                 ),
+               );
+              },
               backgroundColor: Colors.blue.shade700,
               tooltip: 'Add Habits',
               child: const Icon(Icons.add),
