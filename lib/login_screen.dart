@@ -36,6 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
     else {
+      //empty out shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
       showErrorToast("Invalid credentials");
     }
   }

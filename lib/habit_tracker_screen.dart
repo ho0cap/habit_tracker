@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'add_habit_screen.dart';
 
 class HabitTrackerScreen extends StatefulWidget {
@@ -32,11 +35,31 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     return prefs.getString('name') ?? '';
-    //selectedHabitsMap = prefs.getStringList("selectedHabits") ?? {};
   }
 
   Future<void> _saveHabits() async {
-    //save habits to preferences in the future
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedHabitsMap', jsonEncode(selectedHabitsMap));
+    await prefs.setString('completedHabitsMap', jsonEncode(completedHabitsMap));
+  }
+
+  // country_list.dart
+  Future<List<String>> fetchCountries() async {
+    List<String> countries = [
+      'United States',
+      'Canada',
+      'United Kingdom',
+      'Australia',
+      'India',
+      'Germany',
+      'France',
+      'Japan',
+      'China',
+      'Brazil',
+      'South Africa'
+    ];
+
+    return countries;
   }
 
   Color _getColorFromHex(String hexColor) {
@@ -58,6 +81,19 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     }
     return Colors.blue; // Default color in case of error.
   }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString('name') ?? widget.username;
+      selectedHabitsMap = Map<String, String>.from(
+          jsonDecode(prefs.getString('selectedHabitsMap') ?? '{}'));
+      completedHabitsMap = Map<String, String>.from(
+          jsonDecode(prefs.getString('completedHabitsMap') ?? '{}'));
+    });
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
