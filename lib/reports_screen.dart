@@ -14,6 +14,7 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
   Map<String, List<int>> weeklyData = {};
   List<String> selectedHabits = [];
+  List<String> completedHabits = [];
   final List<String> daysOfWeek = [
     'Mon',
     'Tue',
@@ -33,8 +34,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Future<void> _loadWeeklyData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Get the selected habits from the map
+/*
+    selectedHabitsMap = Map<String, String>.from(
+        jsonDecode(prefs.getString('selectedHabitsMap') ?? '{}'));
+    completedHabitsMap = Map<String, String>.from(
+        jsonDecode(prefs.getString('completedHabitsMap') ?? '{}'));
+*/
+    // Get the selected habits and completed habits from the map
     String? selectedHabitsMapString = prefs.getString('selectedHabitsMap');
+    String? completedHabitsMapString = prefs.getString('completedHabitsMap');
     if (selectedHabitsMapString != null) {
       Map<String, dynamic> selectedHabitsMap =
           jsonDecode(selectedHabitsMapString);
@@ -42,6 +50,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
     } else {
       selectedHabits = [];
     }
+
+    if (completedHabitsMapString != null) {
+      Map<String, dynamic> completedHabitsMap =
+          jsonDecode(completedHabitsMapString);
+      completedHabits = completedHabitsMap.keys.toList();
+    } else {
+      completedHabits = [];
+    }
+
+
+
 
     // If no habits are selected, reset weeklyData
     if (selectedHabits.isEmpty) {
@@ -53,6 +72,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
     // Load the data from shared preferences or generate random mixed data if none exists
     String? storedData = prefs.getString('weeklyData');
+/*    print("##########################\n");
+    print(storedData);
+    print("\n##########################");*/
     if (storedData == null) {
       Map<String, List<int>> mixedData = {
         for (var habit in selectedHabits)
@@ -124,6 +146,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
           DataCell(Text(habit)),
           ...List.generate(7, (index) {
             bool isCompleted = weeklyData[habit]?[index] == 1;
+            print("##########################\n");
+            print(habit);
+            print(isCompleted);
+            print("\n##########################");
             return DataCell(
               Icon(
                 isCompleted ? Icons.check_circle : Icons.cancel,

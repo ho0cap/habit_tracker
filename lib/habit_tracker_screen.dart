@@ -7,6 +7,7 @@ import 'add_habit_screen.dart';
 import 'login_screen.dart';
 import 'personal_info_screen.dart';
 import 'reports_screen.dart';
+import 'notifications_screen.dart';
 
 
 class HabitTrackerScreen extends StatefulWidget {
@@ -21,7 +22,18 @@ class HabitTrackerScreen extends StatefulWidget {
 class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
   Map<String, String> selectedHabitsMap = {};
   Map<String, String> completedHabitsMap = {};
+  Map<String, List<int>> completedHabitsMapWeekly = {};
   String name = '';
+
+  final List<String> daysOfWeek = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun'
+  ];
 
   @override
   void initState() {
@@ -38,23 +50,11 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     return prefs.getString('name') ?? '';
   }
 
-  // country_list.dart
-  Future<List<String>> fetchCountries() async {
-    List<String> countries = [
-      'United States',
-      'Canada',
-      'United Kingdom',
-      'Australia',
-      'India',
-      'Germany',
-      'France',
-      'Japan',
-      'China',
-      'Brazil',
-      'South Africa'
-    ];
-
-    return countries;
+  int _getTodayIndex() {
+    DateTime now = DateTime.now();
+    String today = daysOfWeek[now.weekday - 1]; // DateTime.weekday returns 1 for Monday, 7 for Sunday
+    int todayIndex = daysOfWeek.indexOf(today);
+    return todayIndex;
   }
 
   Color _getColorFromHex(String hexColor) {
@@ -86,13 +86,18 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       completedHabitsMap = Map<String, String>.from(
           jsonDecode(prefs.getString('completedHabitsMap') ?? '{}'));
 
-      print("########################\n\n\n $selectedHabitsMap");
+      Map<String, dynamic> decodedMap = jsonDecode(prefs.getString("weeklyData")  ?? '{}');
+      completedHabitsMapWeekly = decodedMap.map((key, value) {
+        return MapEntry(key, List<int>.from(value));
+      });
+
     });
   }
   Future<void> _saveHabits() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedHabitsMap', jsonEncode(selectedHabitsMap));
     await prefs.setString('completedHabitsMap', jsonEncode(completedHabitsMap));
+    await prefs.setString('weeklyData', jsonEncode(completedHabitsMapWeekly));
   }
   
 
@@ -177,6 +182,14 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
             ListTile(
               leading: Icon(Icons.notifications),
               title: Text('Notifications'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NotificationsScreen()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.logout),
@@ -224,6 +237,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                           setState(() {
                             String color = selectedHabitsMap.remove(habit)!;
                             completedHabitsMap[habit] = color;
+                            completedHabitsMapWeekly[habit]?[_getTodayIndex()] = 1;//[for (var i = 0; i < 7; i++) if _getTodayIndex()==i 1 ];
                             _saveHabits();
                           });
                         },
@@ -282,6 +296,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                           setState(() {
                             String color = completedHabitsMap.remove(habit)!;
                             selectedHabitsMap[habit] = color;
+                            completedHabitsMapWeekly[habit]?[_getTodayIndex()] = 0;//[for (var i = 0; i < 7; i++) if _getTodayIndex()==i 0 ];
                             _saveHabits();
                           });
                         },

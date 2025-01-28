@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'dart:io';
 
 import 'login_screen.dart';
+import 'notification_service.dart';
 
 
 class MyHttpOverrides extends HttpOverrides {
@@ -17,6 +18,7 @@ class MyHttpOverrides extends HttpOverrides {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = new MyHttpOverrides();
+  await NotificationService().init();
   runApp(HabitTrackerApp());
 }
 

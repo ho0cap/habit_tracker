@@ -24,6 +24,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  Map<String, List<int>> _weeklyData = {};
+
   double _age = 25; // Default age set to 25
   String _country = 'Morocco';
   List<String> _countries = [];
@@ -50,6 +52,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'Teal': Colors.teal,
     'Deep Purple': Colors.deepPurple,
   };
+  final List<String> _daysOfWeek = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun'
+  ];
 
 
 
@@ -159,6 +170,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       selectedHabitsMap[habit] = randomColor.value.toRadixString(16);
     }
 
+/*    String? storedData = prefs.getString('weeklyData');
+    if (storedData == null) {
+      Map<String, List<int>> mixedData = {
+        for (var habit in selectedHabits) {
+          habit: List.generate(
+              7, (_) => 0), // Generate 0 for not done
+        }
+      };
+      await prefs.setString('weeklyData', jsonEncode(mixedData));
+      storedData = jsonEncode(mixedData);
+    }
+*/
+    Map<String, List<int>> mixedData = {
+      for (var habit in selectedHabitsMap.keys.toList()) 
+        habit: List.generate(
+            7, (_) => 0), // Generate 0 for not done
+    };
+
+
+
     await prefs.setString("name", _nameController.text);
     await prefs.setString("username", _usernameController.text);
     await prefs.setString("password", _passwordController.text);
@@ -166,6 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     await prefs.setString("country", _country);
     await prefs.setDouble("age", _age);
     await prefs.setString('selectedHabitsMap', jsonEncode(selectedHabitsMap));
+    await prefs.setString('weeklyData', jsonEncode(mixedData));
 
 /*
     print("\n\n\n\n\n#################################################");
