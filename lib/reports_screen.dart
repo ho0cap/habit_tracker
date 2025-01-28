@@ -146,10 +146,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
           DataCell(Text(habit)),
           ...List.generate(7, (index) {
             bool isCompleted = weeklyData[habit]?[index] == 1;
-            print("##########################\n");
+/*            print("##########################\n");
             print(habit);
             print(isCompleted);
-            print("\n##########################");
+            print("\n##########################");*/
             return DataCell(
               Icon(
                 isCompleted ? Icons.check_circle : Icons.cancel,

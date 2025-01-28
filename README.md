@@ -1,16 +1,21 @@
-# habit_tracker
+# Time Habit Tracker
 
-A new Flutter project.
+## App Details
+- **App Name**: Time Habit Tracker
+- **Short Description**: Track and improve your habits daily.
+- **Full Description**:
+Time Habit Tracker is a user-friendly app that helps you build positive habits and track progress. Stay motivated with daily reminders, weekly reports, and a visually appealing design. Ideal for anyone looking to improve their productivity and well-being.
+- Keywords: Habit, Productivity, Tracker, Self-improvement, Daily habits
 
-## Getting Started
+## Media Assets
+- **App icon**: ![App Icon](assets/app_icon.png)
+- **App icon**: `app_icon.png`
+- **Screenshots**:
+  1. ![Login Page](screenshots/login_page.png)
+  2. ![Home Page](screenshots/home_page.png)
+  3. ![Reports Page](screenshots/reports_page.png)
+  4. ![Settings Menu](screenshots/settings_menu.png)
+  5. ![Notifications Page](screenshots/notification_page.png)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Keywords
+Habit, Productivity, Tracker, Self-improvement, Daily habits
