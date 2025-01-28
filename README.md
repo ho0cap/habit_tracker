@@ -9,13 +9,12 @@ Time Habit Tracker is a user-friendly app that helps you build positive habits a
 
 ## Media Assets
 - **App icon**: ![App Icon](assets/app_icon.png)
-- **App icon**: `app_icon.png`
 - **Screenshots**:
-  1. ![Login Page](screenshots/login_page.png)
-  2. ![Home Page](screenshots/home_page.png)
-  3. ![Reports Page](screenshots/reports_page.png)
-  4. ![Settings Menu](screenshots/settings_menu.png)
-  5. ![Notifications Page](screenshots/notification_page.png)
+  1. [Login Page](screenshots/login_page.png)
+  2. [Home Page](screenshots/home_page.png)
+  3. [Reports Page](screenshots/reports_page.png)
+  4. [Settings Menu](screenshots/settings_menu.png)
+  5. [Notifications Page](screenshots/notification_page.png)
 
 ## Keywords
 Habit, Productivity, Tracker, Self-improvement, Daily habits
