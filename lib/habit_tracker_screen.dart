@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_habit_screen.dart';
+import 'login_screen.dart';
+import 'personal_info_screen.dart';
+import 'reports_screen.dart';
+
 
 class HabitTrackerScreen extends StatefulWidget {
   final String username;
@@ -24,10 +28,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     super.initState();
 
     () async {
-      var result = await _getSavedHabits();
-      setState(() {
-        name = result;
-      });
+      _loadUserData();
     }();
   }
 
@@ -35,12 +36,6 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     return prefs.getString('name') ?? '';
-  }
-
-  Future<void> _saveHabits() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedHabitsMap', jsonEncode(selectedHabitsMap));
-    await prefs.setString('completedHabitsMap', jsonEncode(completedHabitsMap));
   }
 
   // country_list.dart
@@ -90,9 +85,15 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
           jsonDecode(prefs.getString('selectedHabitsMap') ?? '{}'));
       completedHabitsMap = Map<String, String>.from(
           jsonDecode(prefs.getString('completedHabitsMap') ?? '{}'));
+
+      print("########################\n\n\n $selectedHabitsMap");
     });
   }
-
+  Future<void> _saveHabits() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedHabitsMap', jsonEncode(selectedHabitsMap));
+    await prefs.setString('completedHabitsMap', jsonEncode(completedHabitsMap));
+  }
   
 
   @override
@@ -116,30 +117,62 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue.shade700,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+            SizedBox(
+              height: 150 * 0.75,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade700,
+                ),
+                child: Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Configure'),
+              onTap:  () async {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddHabitScreen(),
+                  ),
+                ).then((updatedHabits) {
+                  _loadUserData(); // Reload data after returning
+                });
+              },
             ),
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Personal Info'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PersonalInfoScreen()),
+                ).then((_) {
+                  _loadUserData(); // Reload data after returning
+                });
+              },
             ),
             ListTile(
               leading: Icon(Icons.analytics),
               title: Text('Reports'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReportsScreen()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.notifications),
@@ -148,6 +181,9 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Sign Out'),
+              onTap: () {
+                _menuLogOutTapped(context);
+              },
             ),
           ],
         ),
@@ -164,7 +200,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               ),
             ),
           ),
-          selectedHabitsMap.isEmpty
+           selectedHabitsMap.isEmpty
               ? const Expanded(
                   child: Center(
                     child: Text(
@@ -214,7 +250,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                 ),
           const Divider(),
           const Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               'Done ✅🎉',
               style: TextStyle(
@@ -252,7 +288,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                         background: Container(
                           color: Colors.red,
                           alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
                           child: const Row(
                             children: [
                               Icon(Icons.undo, color: Colors.white),
@@ -287,6 +323,16 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               child: const Icon(Icons.add),
             )
           : null,
+    );
+  }
+
+  void _menuLogOutTapped(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 

@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'register_screen.dart';
 import 'habit_tracker_screen.dart';
 
+import 'dart:convert';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -41,6 +43,53 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.clear();
       showErrorToast("Invalid credentials");
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  void _loadData() async {
+    //print("##############################################");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState((){
+      String name = prefs.getString("name")  ?? '';
+      String username = prefs.getString("username") ?? '';
+      String password = prefs.getString("password") ?? '';
+      String email = prefs.getString("email") ?? '';
+      String country = prefs.getString("country") ?? '';
+      double age = prefs.getDouble("age") ?? 0.0;
+
+      Map<String, String> selectedHabitsMap = Map<String, String>.from(
+          jsonDecode(prefs.getString('selectedHabitsMap') ?? '{}'));
+      Map<String, String> completedHabitsMap = Map<String, String>.from(
+          jsonDecode(prefs.getString('completedHabitsMap') ?? '{}'));
+
+      if (
+          name.isNotEmpty && username.isNotEmpty && password.isNotEmpty
+          && email.isNotEmpty && country.isNotEmpty && age > 0
+        ) {
+        _savedUsernameValue = username;
+        _savedPasswordValue = password;
+        _savedEmailValue = email;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HabitTrackerScreen(username: username),
+          ),
+        );
+
+      }
+    });
+
+
   }
 
   
