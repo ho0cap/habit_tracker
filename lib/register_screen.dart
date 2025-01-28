@@ -65,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _loadCountries() async {
     try {
-      await checkNetworkConnectivity();
+      //await checkNetworkConnectivity();
       List<String> countries = await fetchCountries();
       setState(() {
         _countries = countries;
@@ -351,7 +351,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
       ),
-      child: DropdownButton<String>(
+      child: _countries.isEmpty ? 
+          LinearProgressIndicator()
+          :
+        DropdownButton<String>(
         value: _country,
         icon: Icon(Icons.arrow_drop_down, color: Colors.blue.shade700),
         isExpanded: true,
